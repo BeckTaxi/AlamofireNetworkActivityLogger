@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2610F034207FC46D00D380F3 /* NetworkActivityOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2610F033207FC46D00D380F3 /* NetworkActivityOutput.swift */; };
+		2610F035207FC47200D380F3 /* NetworkActivityOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2610F033207FC46D00D380F3 /* NetworkActivityOutput.swift */; };
+		2610F036207FC47300D380F3 /* NetworkActivityOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2610F033207FC46D00D380F3 /* NetworkActivityOutput.swift */; };
+		2610F037207FC47300D380F3 /* NetworkActivityOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2610F033207FC46D00D380F3 /* NetworkActivityOutput.swift */; };
 		AB2A9A301DBB4600004FC92E /* AlamofireNetworkActivityLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = AB2A9A2E1DBB4600004FC92E /* AlamofireNetworkActivityLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AB2A9A3A1DBB46C1004FC92E /* NetworkActivityLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2A9A391DBB46C1004FC92E /* NetworkActivityLogger.swift */; };
 		AB2A9A571DBB4EC9004FC92E /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB2A9A471DBB4E8A004FC92E /* Alamofire.framework */; };
@@ -79,6 +83,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2610F033207FC46D00D380F3 /* NetworkActivityOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkActivityOutput.swift; sourceTree = "<group>"; };
 		AB2A9A2B1DBB4600004FC92E /* AlamofireNetworkActivityLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AlamofireNetworkActivityLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB2A9A2E1DBB4600004FC92E /* AlamofireNetworkActivityLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlamofireNetworkActivityLogger.h; sourceTree = "<group>"; };
 		AB2A9A2F1DBB4600004FC92E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -147,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				AB2A9A391DBB46C1004FC92E /* NetworkActivityLogger.swift */,
+				2610F033207FC46D00D380F3 /* NetworkActivityOutput.swift */,
 				AB2A9A381DBB469C004FC92E /* Supporting Files */,
 			);
 			path = Source;
@@ -430,6 +436,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2610F034207FC46D00D380F3 /* NetworkActivityOutput.swift in Sources */,
 				AB2A9A3A1DBB46C1004FC92E /* NetworkActivityLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -438,6 +445,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2610F035207FC47200D380F3 /* NetworkActivityOutput.swift in Sources */,
 				AB2A9A821DBB54D1004FC92E /* NetworkActivityLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -446,6 +454,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2610F036207FC47300D380F3 /* NetworkActivityOutput.swift in Sources */,
 				AB2A9A831DBB54D2004FC92E /* NetworkActivityLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -454,6 +463,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2610F037207FC47300D380F3 /* NetworkActivityOutput.swift in Sources */,
 				AB2A9A841DBB54D2004FC92E /* NetworkActivityLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

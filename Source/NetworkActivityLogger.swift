@@ -65,6 +65,8 @@ public class NetworkActivityLogger {
     
     // MARK: - Internal - Initialization
     
+    private var logOutput: NetworkActivityOutput?
+    
     init() {
         level = .info
         startDates = [URLSessionTask: Date]()
@@ -78,6 +80,12 @@ public class NetworkActivityLogger {
     
     /// Start logging requests and responses.
     public func startLogging() {
+        startLogging(output: NetworkActivityConsoleOutput())
+    }
+    
+    public func startLogging(output: NetworkActivityOutput) {
+        logOutput = output
+        
         stopLogging()
         
         let notificationCenter = NotificationCenter.default
@@ -124,19 +132,23 @@ public class NetworkActivityLogger {
         case .debug:
             logDivider()
             
-            print("\(httpMethod) '\(requestURL.absoluteString)':")
+            let requestString = ("\(httpMethod) '\(requestURL.absoluteString)':")
+            var headers = ""
+            var body = ""
             
             if let httpHeadersFields = request.allHTTPHeaderFields {
-                logHeaders(headers: httpHeadersFields)
+                headers = combineHeaderOutput(headers: httpHeadersFields)
             }
             
             if let httpBody = request.httpBody, let httpBodyString = String(data: httpBody, encoding: .utf8) {
-                print(httpBodyString)
+                body = httpBodyString
             }
+            
+            logOutput?.logInfoRequest(requestString + " " + headers + " " + body)
         case .info:
             logDivider()
             
-            print("\(httpMethod) '\(requestURL.absoluteString)'")
+            logOutput?.logInfoRequest(("\(httpMethod) '\(requestURL.absoluteString)'"))
         default:
             break
         }
@@ -169,8 +181,7 @@ public class NetworkActivityLogger {
             case .debug, .info, .warn, .error:
                 logDivider()
                 
-                print("[Error] \(httpMethod) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]:")
-                print(error)
+                logOutput?.logErrorResponse("[Error] \(httpMethod) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]:", error: error)
             default:
                 break
             }
@@ -183,28 +194,29 @@ public class NetworkActivityLogger {
             case .debug:
                 logDivider()
                 
-                print("\(String(response.statusCode)) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]:")
-                
-                logHeaders(headers: response.allHeaderFields)
+                let responseString = "\(String(response.statusCode)) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]:"
+                var headers = combineHeaderOutput(headers: response.allHeaderFields)
+                var body = ""
                 
                 guard let data = sessionDelegate[task]?.delegate.data else { break }
-                    
+                
                 do {
                     let jsonObject = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
                     let prettyData = try JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted)
                     
                     if let prettyString = String(data: prettyData, encoding: .utf8) {
-                        print(prettyString)
+                        body = prettyString
                     }
                 } catch {
                     if let string = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
-                        print(string)
+                        body = string as String
                     }
                 }
+                logOutput?.logInfoResponse(responseString + " " + headers + " " + body)
             case .info:
                 logDivider()
                 
-                print("\(String(response.statusCode)) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]")
+                logOutput?.logInfoResponse("\(String(response.statusCode)) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]")
             default:
                 break
             }
@@ -223,5 +235,14 @@ private extension NetworkActivityLogger {
             print("  \(key) : \(value)")
         }
         print("]")
+    }
+    
+    func combineHeaderOutput(headers: [AnyHashable : Any]) -> String {
+        var string = "Headers: ["
+        for (key, value) in headers {
+            string += "  \(key) : \(value)"
+        }
+        string += "]"
+        return string
     }
 }
