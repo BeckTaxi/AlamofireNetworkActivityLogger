@@ -61,7 +61,7 @@ public class NetworkActivityLogger {
     /// Omit requests which match the specified predicate, if provided.
     public var filterPredicate: NSPredicate?
     
-    private var startDates: [URLSessionTask: Date]
+    private var startDates: [Int: Date]
     
     // MARK: - Internal - Initialization
     
@@ -69,7 +69,7 @@ public class NetworkActivityLogger {
     
     init() {
         level = .info
-        startDates = [URLSessionTask: Date]()
+        startDates = [Int: Date]()
     }
     
     deinit {
@@ -126,7 +126,7 @@ public class NetworkActivityLogger {
             return
         }
         
-        startDates[task] = Date()
+        startDates[task.taskIdentifier] = Date()
         
         switch level {
         case .debug:
@@ -171,9 +171,9 @@ public class NetworkActivityLogger {
         
         var elapsedTime: TimeInterval = 0.0
         
-        if let startDate = startDates[task] {
+        if let startDate = startDates[task.taskIdentifier] {
             elapsedTime = Date().timeIntervalSince(startDate)
-            startDates.removeValue(forKey: task)
+            startDates.removeValue(forKey: task.taskIdentifier)
         }
         
         if let error = task.error {
