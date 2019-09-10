@@ -63,6 +63,8 @@ public class NetworkActivityLogger {
     
     private let queue = DispatchQueue(label: "\(NetworkActivityLogger.self) Queue")
     
+    private var logOutput: NetworkActivityOutput?
+    
     // MARK: - Internal - Initialization
     
     init() {
@@ -76,7 +78,13 @@ public class NetworkActivityLogger {
     // MARK: - Logging
     
     /// Start logging requests and responses.
+    
     public func startLogging() {
+        startLogging(output: NetworkActivityConsoleOutput())
+    }
+    
+    public func startLogging(output: NetworkActivityOutput) {
+        logOutput = output
         stopLogging()
         
         let notificationCenter = NotificationCenter.default
@@ -124,13 +132,12 @@ public class NetworkActivityLogger {
                 
                 self.logDivider()
                 
-                print("\(httpMethod) '\(requestURL.absoluteString)':")
-                
-                print("cURL:\n\(cURL)")
+                self.logOutput?.logInfoRequest("\(httpMethod) '\(requestURL.absoluteString)':" + "cURL:\n\(cURL)")
+
             case .info:
                 self.logDivider()
                 
-                print("\(httpMethod) '\(requestURL.absoluteString)'")
+                self.logOutput?.logInfoRequest("\(httpMethod) '\(requestURL.absoluteString)'")
             default:
                 break
             }
@@ -160,8 +167,8 @@ public class NetworkActivityLogger {
                 case .debug, .info, .warn, .error:
                     self.logDivider()
                     
-                    print("[Error] \(httpMethod) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]:")
-                    print(error)
+                    self.logOutput?.logErrorResponse("[Error] \(httpMethod) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]:", error: error)
+
                 default:
                     break
                 }
@@ -174,10 +181,10 @@ public class NetworkActivityLogger {
                 case .debug:
                     self.logDivider()
                     
-                    print("\(String(response.statusCode)) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]:")
-                    
-                    self.logHeaders(headers: response.allHeaderFields)
-                    
+                    let responseString = "\(String(response.statusCode)) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]:"
+                    let headers = self.combineHeaderOutput(headers: response.allHeaderFields)
+                    var body = ""
+
                     guard let data = dataRequest.data else { break }
                     
                     print("Body:")
@@ -187,17 +194,17 @@ public class NetworkActivityLogger {
                         let prettyData = try JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted)
                         
                         if let prettyString = String(data: prettyData, encoding: .utf8) {
-                            print(prettyString)
+                            body = prettyString
                         }
                     } catch {
                         if let string = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
-                            print(string)
+                            body = string as String
                         }
                     }
+                    self.logOutput?.logInfoResponse(responseString + " " + headers + " " + body)
                 case .info:
                     self.logDivider()
-                    
-                    print("\(String(response.statusCode)) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]")
+                    self.logOutput?.logInfoResponse("\(String(response.statusCode)) '\(requestURL.absoluteString)' [\(String(format: "%.04f", elapsedTime)) s]")
                 default:
                     break
                 }
@@ -219,4 +226,14 @@ private extension NetworkActivityLogger {
         }
         print("]")
     }
+    
+    func combineHeaderOutput(headers: [AnyHashable : Any]) -> String {
+        var string = "Headers: ["
+        for (key, value) in headers {
+            string += "  \(key) : \(value)"
+        }
+        string += "]"
+        return string
+    }
+
 }
